@@ -2,10 +2,20 @@ from fastapi import FastAPI
 from rank_bm25 import BM25Okapi
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
+from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import numpy as np
 
 app = FastAPI()
+
+origins = ["*"]
+app.add_middleware(
+ CORSMiddleware,
+ allow_origins=origins,
+ allow_credentials=True,
+ allow_methods=["*"],
+ allow_headers=["*"],
+)
 
 global bm25, df, stemmer, stopword
 
@@ -46,7 +56,7 @@ def read_description(description: str):
     if bm25 is None:
         init_bm25()
         print("Initialized BM25")
-        
+
     query = description
     query = try_stemming_stopword(query)
     tokenized_query = query.split(" ")
